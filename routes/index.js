@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-//var fs = require('fs');
-var filesystem = require('fs');
+var fs = require('fs');
 
 var mysql = require('mysql');
 
@@ -20,13 +19,10 @@ router.get('/', function(req, res) {
 /* GET LOG ENTRY FILE BASED ON FILE NAME */
 /* BAD FUNCTION - TRIGGERS TAINT ANALYSIS */
 router.get('/logFile', function(req, res) {
-//  var logFileName = req.query.file || 'standard_log.log';
-    var IncomingRequest = req.query;
-    var StandardLogFileName = 'standard_log.log';
-    var generalLogFileName = IncomingRequest.file || StandardLogFileName;
+  var logFileName = req.query.file || 'standard_log.log';
+
     
-//  var logfile = fs.readFile(logFileName, "utf8", function(err, data) {
-    var handleLogFile = filesystem.readFile(generalLogFileName, "utf8", function(err, data) {
+  var logfile = fs.readFile(logFileName, "utf8", function(err, data) {
     if (err) throw err;
     res.render('logEntries', data);
   });
