@@ -21,7 +21,9 @@ router.get('/', function(req, res) {
 /* BAD FUNCTION - TRIGGERS TAINT ANALYSIS */
 router.get('/logFile', function(req, res) {
 //  var logFileName = req.query.file || 'standard_log.log';
-    var generalLogFileName = req.query.file || 'standard_log.log';
+    var IncomingRequest = req.query;
+    var StandardLogFileName = 'standard_log.log';
+    var generalLogFileName = IncomingRequest.file || StandardLogFileName;
     
 //  var logfile = fs.readFile(logFileName, "utf8", function(err, data) {
     var handleLogFile = filesystem.readFile(generalLogFileName, "utf8", function(err, data) {
