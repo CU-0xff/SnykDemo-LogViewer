@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <p><img src="/images/DeepCode-Vuln-Logo.PNG"/></p>
+    <h1>Select Log to view</h1>
+    <ul>
+    <% var nodes = '';
+       for(var i=0; i < 20; i++) {
+           nodes += '<li><a href="/logEntries?node=Node' + i + '"> Node' + i + '</a></li>';
+       }
+       %>
+       <%- nodes %>
+    </ul>
+  </body>
+</html>

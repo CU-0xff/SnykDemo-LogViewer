@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Log Entries for <%= nodeName %> </title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <img src="/images/DeepCode-Vuln-Logo.PNG"/>
+    <h1>Log Entry for <%= nodeName %> </h1>
+    <ul>
+      <%
+        var list = '';
+        for (i = 0; i < log.length; i++) {
+          list += '<li>' + log[i].timeStamp + ' ->' + log[i].reading + '</li>';
+        }
+      %>
+      <%- list %>
+    </ul>
+  </body>
+</html>
