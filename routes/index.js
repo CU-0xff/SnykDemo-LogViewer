@@ -27,7 +27,6 @@ router.get('/logFile', function(req, res) {
     res.render('logEntries', data);
   });
 });
- 
 
 /* GET LOG ENTRIES BASED ON SELECTED NODE */
 /* BAD FUNCTION - TRIGGERS TAINT ANALYSIS */
@@ -42,6 +41,5 @@ router.get('/logEntries', function(req, res) {
     res.render('logEntries', {"nodeName" : node, "log" : docs});
   });
 });
-
 
 module.exports = router;
