@@ -1,0 +1,1932 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "SnykCode",
+          "semanticVersion": "1.0.0",
+          "version": "1.0.0",
+          "rules": [
+            {
+              "id": "javascript/PT",
+              "name": "PT",
+              "shortDescription": {
+                "text": "Path Traversal"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "help": {
+                "markdown": "## Details\n\nA Directory Traversal attack (also known as path traversal) aims to access files and directories that are stored outside the intended folder. By manipulating files with \"dot-dot-slash (../)\" sequences and its variations, or by using absolute file paths, it may be possible to access arbitrary files and directories stored on file system, including application source code, configuration, and other critical system files.\n\nDirectory Traversal vulnerabilities can be generally divided into two types:\n\n- **Information Disclosure**: Allows the attacker to gain information about the folder structure or read the contents of sensitive files on the system.\n\n`st` is a module for serving static files on web pages, and contains a [vulnerability of this type](https://snyk.io/vuln/npm:st:20140206). In our example, we will serve files from the `public` route.\n\nIf an attacker requests the following URL from our server, it will in turn leak the sensitive private key of the root user.\n\n```\ncurl http://localhost:8080/public/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/root/.ssh/id_rsa\n```\n**Note** `%2e` is the URL encoded version of `.` (dot).\n\n- **Writing arbitrary files**: Allows the attacker to create or replace existing files. This type of vulnerability is also known as `Zip-Slip`.\n\nOne way to achieve this is by using a malicious `zip` archive that holds path traversal filenames. When each filename in the zip archive gets concatenated to the target extraction folder, without validation, the final path ends up outside of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a `zip` archive with one benign file and one malicious file. Extracting the malicious file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n2018-04-15 22:04:29 .....           19           19  good.txt\n2018-04-15 22:04:42 .....           20           20  ../../../../../../root/.ssh/authorized_keys\n```",
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "javascript",
+                  "maintenance",
+                  "file",
+                  "module",
+                  "xdl"
+                ],
+                "categories": [
+                  "Security"
+                ],
+                "exampleCommitFixes": [
+                  {
+                    "commitURL": "https://github.com/zhoukekestar/modules/commit/b6c2fc78dc8679080b982124a24771f1466b2fb2?diff=split#diff-a8575a14457a013bf8a0fec74374a923L20",
+                    "lines": [
+                      {
+                        "line": "// Image request.",
+                        "lineNumber": 18,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "app.get('/upload/:id', function(req, res) {",
+                        "lineNumber": 19,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  res.sendFile(dir + '/' + req.params.id);",
+                        "lineNumber": 20,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "  // Test ok on winodws. Not sure that linux will be work ok.",
+                        "lineNumber": 21,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "  res.sendFile((dir + '/' + req.params.id).replace(/\\//g, '\\\\\\\\'));",
+                        "lineNumber": 22,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "});",
+                        "lineNumber": 23,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/FredrikNoren/ungit/commit/51870548599790dd125f02916461e04f6d29c53f?diff=split#diff-71e7385fb3d187340c7741bf6d4f82ffL335",
+                    "lines": [
+                      {
+                        "line": "});",
+                        "lineNumber": 332,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "app.get('/api/fs/listDirectories', ensureAuthenticated, (req, res) => {",
+                        "lineNumber": 334,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  const dir = req.query.term.trim();",
+                        "lineNumber": 335,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "  const dir = path.resolve(req.query.term.trim()).replace(\"/~\", \"\");",
+                        "lineNumber": 335,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "  fs.readdirAsync(dir).then(filenames => {",
+                        "lineNumber": 337,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    return filenames.map((filename) => path.join(dir, filename));",
+                        "lineNumber": 338,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  }).filter((filepath) => {",
+                        "lineNumber": 339,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/shime/livedown/commit/9862f810655d8e40f8e235a5ef47db332ad29be4?diff=split#diff-78c12f5adc1848d13b1c6f07055d996eL72",
+                    "lines": [
+                      {
+                        "line": "app.use(parser.json())",
+                        "lineNumber": 75,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "app.use(express.static(path.join(__dirname, 'public')))",
+                        "lineNumber": 76,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "app.use(function(req, res, next){",
+                        "lineNumber": 77,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  if (new RegExp('.' + ImageExtesions.join('|') + \"$\").test(req.path)){",
+                        "lineNumber": 78,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    res.sendFile(path.join(filePath, '../' + req.path))",
+                        "lineNumber": 73,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "    res.sendFile(path.join(filePath, '../' + req.path), sendFileOpts)",
+                        "lineNumber": 79,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "  } else {",
+                        "lineNumber": 80,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    next()",
+                        "lineNumber": 81,
+                        "lineChange": "none"
+                      }
+                    ]
+                  }
+                ],
+                "exampleCommitDescriptions": [
+                  "* Add checking output files to prerender tests",
+                  "cleaning out unused modules;",
+                  "* [xdl][exp] Add `exp test` command to let us test xdl schemas locally easily"
+                ],
+                "precision": "very-high",
+                "repoDatasetSize": 595,
+                "cwe": [
+                  "CWE-23"
+                ]
+              }
+            },
+            {
+              "id": "javascript/NoHardcodedPasswords",
+              "name": "NoHardcodedPasswords",
+              "shortDescription": {
+                "text": "Use of Hard-coded Credentials"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "help": {
+                "markdown": "\n## Details\n\nDevelopers may use hard-coded credentials for convenience when coding in order to simplify their workflow. While they are responsible for removing these before production, occasionally this task may fall through the cracks. This also becomes a maintenance challenge when credentials are re-used across multiple applications.\n\nOnce hackers gain access, they may take advantage of privilege level to remove or alter data, take down a site or app, or hold any of the above for ransom. The risk across multiple similar projects is even greater. If code containing the credentials is reused across multiple projects, they will all be compromised.\n\n### Best practices for prevention\n* Plan software architecture such that keys and passwords are always stored outside the code, wherever possible.\n* Plan encryption into software architecture for all credential information and ensure proper handling of keys, credentials, and passwords.\n* Prompt for a secure password on first login rather than hard-code a default password.\n* If a hard-coded password or credential must be used, limit its use, for example, to system console users rather than via the network.\n* Use strong hashes for inbound password authentication, ideally with randomly assigned salts to increase the difficulty level in case of brute-force attack.",
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "javascript",
+                  "maintenance",
+                  "usability",
+                  "room",
+                  "mock"
+                ],
+                "categories": [
+                  "Security"
+                ],
+                "exampleCommitFixes": [
+                  {
+                    "commitURL": "https://github.com/kbrsh/snip/commit/67f9fb8e117583da57af1bbac7ad31e02e360b08?diff=split#diff-783b3c178e66001d7fc3799c08ec6a30L107",
+                    "lines": [
+                      {
+                        "line": "// Users",
+                        "lineNumber": 104,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "User.create({",
+                        "lineNumber": 106,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  username: \"test\",",
+                        "lineNumber": 107,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  password: \"123\",",
+                        "lineNumber": 108,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "  salt: \"WquZ012C\",",
+                        "lineNumber": 108,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "  hash: \"c5e635ec235a51e89f6ed7d4857afe58663d54f5\",",
+                        "lineNumber": 109,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "  links: \"\"",
+                        "lineNumber": 110,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "});",
+                        "lineNumber": 111,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/spmjs/spm/commit/68f545853f7234f829f17e4e807a26c39721c747?diff=split#diff-ee71e8c29e7bc68ca4bd61bf722a5c56L10",
+                    "lines": [
+                      {
+                        "line": "  var service = yuan();",
+                        "lineNumber": 7,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  var stub = sinon.stub(service, 'request');",
+                        "lineNumber": 8,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  service.login({username: 'spm', password: 'spm'}, function() {});",
+                        "lineNumber": 9,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "  service.login({username: 'spm', token: 'spm'}, function() {});",
+                        "lineNumber": 9,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "  stub.callCount.should.eql(1);",
+                        "lineNumber": 10,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "});",
+                        "lineNumber": 11,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/codefordenver/Comrad/commit/a0485e6701869c0f0b558fefa946c6eca2d54022?diff=split#diff-aee85098e751c8ecb7298387b9364bd7L12",
+                    "lines": [
+                      {
+                        "line": "},",
+                        "lineNumber": 9,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "create: (req, res) => {",
+                        "lineNumber": 11,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  const { username, password } = req.body;",
+                        "lineNumber": 12,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "  db.User",
+                        "lineNumber": 14,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    .create({ username: 'UserOne', password: 'password' })",
+                        "lineNumber": 12,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "    .create({ username, password })",
+                        "lineNumber": 15,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "    .then(dbNote => res.json(dbNote))",
+                        "lineNumber": 16,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    .catch(err => res.json(err));",
+                        "lineNumber": 17,
+                        "lineChange": "none"
+                      }
+                    ]
+                  }
+                ],
+                "exampleCommitDescriptions": [
+                  "- Join room e2e tests added",
+                  "Mock api() tests"
+                ],
+                "precision": "very-high",
+                "repoDatasetSize": 189,
+                "cwe": [
+                  "CWE-798",
+                  "CWE-259"
+                ]
+              }
+            },
+            {
+              "id": "javascript/Sqli",
+              "name": "Sqli",
+              "shortDescription": {
+                "text": "SQL Injection"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "help": {
+                "markdown": "## Details\n\nIn an SQL injection attack, the user can submit an SQL query directly to the database, gaining access without providing appropriate credentials. Hackers can then view, export, modify, and delete confidential information; change passwords and other authentication information; and possibly gain access to other systems within the network. This is one of the most commonly exploited categories of vulnerability, but can largely be avoided through good coding practices.\n\n### Best practices for prevention\n- Avoid passing user-entered parameters directly to the SQL server.\n- When coding, define SQL code first, then pass in parameters. Use prepared statements with parameterized queries. Examples include `SqlCommand()` in .NET and `bindParam()` in PHP.\n- Use strong typing for all parameters so unexpected user data will be rejected.\n- Where direct user input cannot be avoided for performance reasons, validate input against a very strict allowlist of permitted characters, avoiding special characters such as `? & / < > ; -` and spaces. Use a vendor-supplied escaping routine if possible.\n- Develop your application in an environment and/or using libraries that provide protection against SQL injection.\n- Harden your entire environment around a least-privilege model, ideally with isolated accounts with privileges only for particular tasks.",
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "javascript",
+                  "maintenance",
+                  "tests",
+                  "database",
+                  "adapter"
+                ],
+                "categories": [
+                  "Security"
+                ],
+                "exampleCommitFixes": [
+                  {
+                    "commitURL": "https://github.com/mozilla/napkin/commit/b48aa5071e69bfe5fb22a7955514ff1fa0d9ca75?diff=split#diff-8c3093706848cad6938fd91248441eafL53",
+                    "lines": [
+                      {
+                        "line": " * Returns: A screen object if found, error if not found",
+                        "lineNumber": 50,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": " */",
+                        "lineNumber": 51,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "exports.get = function(req, db, identifier, callback) {",
+                        "lineNumber": 52,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  db.get('project:' + req.params.id + ':screen:' + identifier, function(err, screen) {",
+                        "lineNumber": 53,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "  crud.get(req, 'project:' + req.params.id + ':screen:' + identifier, db, function(err, screen) {",
+                        "lineNumber": 28,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "    if (err) {",
+                        "lineNumber": 54,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "      return callback(err);",
+                        "lineNumber": 55,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/usecanvas/livedb-postgresql/commit/fb13af89f39ca2112089378385c2481675b11428?diff=split#diff-168726dbe96b3ce427e7fedce31bb0bcL86",
+                    "lines": [
+                      {
+                        "line": "var dataColumn = this.dataColumn;",
+                        "lineNumber": 83,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "this.db(this.table)",
+                        "lineNumber": 85,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  .where(where)",
+                        "lineNumber": 86,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  .select(dataColumn)",
+                        "lineNumber": 87,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  .limit(1)",
+                        "lineNumber": 88,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  .exec(function onResult(err, rows) {",
+                        "lineNumber": 89,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "  .asCallback(function onResult(err, rows) {",
+                        "lineNumber": 89,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "    if (err) return cb(err, null);",
+                        "lineNumber": 90,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    cb(null, rows.length ? rows[0][dataColumn] : null);",
+                        "lineNumber": 91,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  });",
+                        "lineNumber": 92,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/ireapps/census/commit/7626bcc9577e279dd4f91b86760110347cb6f846?diff=split#diff-5933928215d2295a1a08721bd88a70f2L95",
+                    "lines": [
+                      {
+                        "line": "success: function(states) {",
+                        "lineNumber": 94,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    _.each(states, function(state) {",
+                        "lineNumber": 95,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "        query.mappings.states.push([state, STATES[state]]);",
+                        "lineNumber": 96,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    });",
+                        "lineNumber": 97,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "}",
+                        "lineNumber": 98,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "// Remove this section to enable \"go button\" prompt:",
+                        "lineNumber": 220,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "var q = window.query;",
+                        "lineNumber": 221,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "if (query.get('summarylevel') && query.get(query.get(\"summarylevel\")))",
+                        "lineNumber": 215,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "if (this.get('summarylevel') && this.get(this.get(\"summarylevel\")))",
+                        "lineNumber": 222,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "    // The item we just selected is of the same type as our",
+                        "lineNumber": 223,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    // target datatype. We just picked the value we wanted.",
+                        "lineNumber": 224,
+                        "lineChange": "none"
+                      }
+                    ]
+                  }
+                ],
+                "exampleCommitDescriptions": [
+                  "* Additional tests",
+                  "* Added more indepth error handling to connections on all database adapters.",
+                  "* Adapt deletion + fix dependencies errors from yarn control"
+                ],
+                "precision": "very-high",
+                "repoDatasetSize": 255,
+                "cwe": [
+                  "CWE-89"
+                ]
+              }
+            },
+            {
+              "id": "javascript/NoRateLimitingForExpensiveWebOperation",
+              "name": "NoRateLimitingForExpensiveWebOperation",
+              "shortDescription": {
+                "text": "Allocation of Resources Without Limits or Throttling"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "help": {
+                "markdown": "\n## Details\n\nWithout unlimited resources, software operating in the real world is inherently limited in the resources it may consume; similarly, servers are limited by the number of simultaneous sessions they can handle. Therefore, it is important for developers to design software that considers these real-world physical (or virtual) limitations and limits user sessions accordingly, both in terms of the number of user sessions and in the quantity of resources each user may demand. Software with this weakness does not include such limitations and as a result, individual user sessions may consume too many resources, leading to unintended software behavior including, potentially, denial of service. This can be compared to a single restaurant customer emptying out the entire buffet, leaving no food for other customers--or an entire busload mobbing the buffet all at once, with a similar effect. This may happen inadvertently or as a result of an attack by a malicious user.\n\n### Best practices for prevention\n* Test extensively to obtain baseline values indicating how the software performs in the real world under various conditions (normal and peak); use these values to determine reasonable software limits.\n* Set clear limits for all flexible parameters such as maximum allocable memory, number of processes within a given timeframe, file descriptors, requests per client, number of records per request, etc. This is particularly true for any parameters within user control.\n* Release all resources when no longer in use, including incorporating timeouts for inactive users, processes, and resources.\n* Familiarize Dev, Ops, and IT teams with best practices for recognizing and preventing DoS attacks and out-of-control resource allocation to prevent catastrophic failures.",
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "javascript",
+                  "maintenance",
+                  "server",
+                  "file",
+                  "page"
+                ],
+                "categories": [
+                  "Security"
+                ],
+                "exampleCommitFixes": [
+                  {
+                    "commitURL": "https://github.com/davidmerfield/Blot/commit/f2bcb51b129075c8ebe5c1c23fac36dee35e800c?diff=split#diff-c484f00c3bf8aafe373978f0aa951528L20",
+                    "lines": [
+                      {
+                        "line": "var form = login.route('/');",
+                        "lineNumber": 26,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": " ",
+                        "lineNumber": 27,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "form.all(limiter.prevent);",
+                        "lineNumber": 28,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "form.get(checkToken, function(req, res){",
+                        "lineNumber": 30,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  res.render('log-in-email');",
+                        "lineNumber": 31,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "});",
+                        "lineNumber": 32,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "form.post(parse, checkEmail, checkReset, checkPassword);",
+                        "lineNumber": 34,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/joelseq/SourceGrade/commit/d5e3f547a705162b51fa195747962ecf728a3e37?diff=split#diff-ea75b530d74f94670cea053feb8b961bL59",
+                    "lines": [
+                      {
+                        "line": "} else {",
+                        "lineNumber": 80,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  app.use(express.static(path.resolve(__dirname, '../dist')));",
+                        "lineNumber": 81,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  app.get('*', function (req, res) {",
+                        "lineNumber": 58,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "  app.get('*', (req, res) => {",
+                        "lineNumber": 82,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "    res.sendFile(path.resolve(__dirname, '../dist/index.html'));",
+                        "lineNumber": 83,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    res.end();",
+                        "lineNumber": 84,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  });",
+                        "lineNumber": 85,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "}",
+                        "lineNumber": 86,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/gayanvoice/nodejs-graphql/commit/f97d733118ee13ef7eb716c3f3343a7ebc4fd648?diff=split#diff-78c12f5adc1848d13b1c6f07055d996eL140",
+                    "lines": [
+                      {
+                        "line": "app.use(express.static(path.join(__dirname, 'client/build')));",
+                        "lineNumber": 138,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "app.use(limiter, express.static(path.join(__dirname, 'client/build')));",
+                        "lineNumber": 144,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "app.get('*', function(req, res) {",
+                        "lineNumber": 145,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    try{",
+                        "lineNumber": 146,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));",
+                        "lineNumber": 147,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    } catch (e) {",
+                        "lineNumber": 148,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "        console.log(e);",
+                        "lineNumber": 149,
+                        "lineChange": "none"
+                      }
+                    ]
+                  }
+                ],
+                "exampleCommitDescriptions": [
+                  "WIP Fix server tests.",
+                  "* Fixed tests failing due to a renamed file.",
+                  "* The end-to-end test now works up to the your-claims page."
+                ],
+                "precision": "very-high",
+                "repoDatasetSize": 1163,
+                "cwe": [
+                  "CWE-770"
+                ]
+              }
+            },
+            {
+              "id": "javascript/UseCsurfForExpress",
+              "name": "UseCsurfForExpress",
+              "shortDescription": {
+                "text": "Cross-Site Request Forgery (CSRF)"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "help": {
+                "markdown": "\n## Details\nCross-site request forgery is an attack in which a malicious third party takes advantage of a user's authenticated credentials (such as a browser cookie) to impersonate that trusted user and perform unauthorized actions. The web application server cannot tell the difference between legitimate and malicious requests. This type of attack generally begins by tricking the user with a social engineering attack, such as a link or popup that the user inadvertently clicks, causing an unauthorized request to be sent to the web server. Consequences vary: At a standard user level, hackers can change passwords, transfer funds, make purchases, or connect with contacts; from an administrator account, hackers can then make changes to or even take down the app itself.\n\n### Best practices for prevention\n* Use development frameworks that defend against CSRF, using a nonce, hash, or some other security device to the URL and/or to forms.\n* Implement secure, unique, hidden tokens that are checked by the server each time to validate state-change requests.\n* Never assume that authentication tokens and session identifiers mean a request is legitimate.\n* Understand and implement other safe-cookie techniques, such as double submit cookies.\n* Terminate user sessions when not in use, including automatic timeout.\n* Ensure rigorous coding practices and defenses against other commonly exploited CWEs, since cross-site scripting (XSS), for example, can be used to bypass defenses against CSRF.\n\n## References\n\n* [Express Documentation - Implement CSRF Protection](https://expressjs.com/en/resources/middleware/csurf.html)\n* [Node Security Checklist - CSRF](https://blog.risingstack.com/node-js-security-checklist/#csrf)",
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "javascript",
+                  "maintenance",
+                  "express",
+                  "server",
+                  "CSRF"
+                ],
+                "categories": [
+                  "Security"
+                ],
+                "exampleCommitFixes": [
+                  {
+                    "commitURL": "https://github.com/eclipse/orion.client/commit/ad8f3bce33a1ea9d1e2144e6c42f075ad25829d6?diff=split#diff-16594450dc1f06f7d9cf4a47859cfa52L175",
+                    "lines": [
+                      {
+                        "line": "}",
+                        "lineNumber": 172,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "return express()",
+                        "lineNumber": 174,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "return express.Router()",
+                        "lineNumber": 174,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": ".use(bodyParser.json())",
+                        "lineNumber": 175,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": ".use(resource(workspaceRoot, {",
+                        "lineNumber": 176,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": ".use(apiPath(root))",
+                        "lineNumber": 176,
+                        "lineChange": "added"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/flowgrammable/flowsim/commit/1681245625230c6d71e1e74b0ada6551cbf2d935?diff=split#diff-4cb60403ef79ea471c0c046e9873a1e2L6",
+                    "lines": [
+                      {
+                        "line": "var cookieSession = require('cookie-session');",
+                        "lineNumber": 3,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "express()",
+                        "lineNumber": 5,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "connect()",
+                        "lineNumber": 5,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "  .use(cookieParser())",
+                        "lineNumber": 6,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  .use(cookieSession({ secret: 'testsecret' }))",
+                        "lineNumber": 7,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/staticdeploy/staticdeploy/commit/177e64efa883d980ce1c18ad6697364c6aa8d3d9?diff=split#diff-480a70fa6d6756e3b9c0050c38031b56L34",
+                    "lines": [
+                      {
+                        "line": "} = options;",
+                        "lineNumber": 31,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "return express().use([",
+                        "lineNumber": 33,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "    bunyanMiddleware({",
+                        "lineNumber": 34,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "        logger: logger,",
+                        "lineNumber": 35,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "return express()",
+                        "lineNumber": 33,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "    .disable(\"x-powered-by\")",
+                        "lineNumber": 34,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "    .use([",
+                        "lineNumber": 35,
+                        "lineChange": "added"
+                      }
+                    ]
+                  }
+                ],
+                "exampleCommitDescriptions": [
+                  "Test without express",
+                  "/server tests ()",
+                  "Added CSRF support"
+                ],
+                "precision": "very-high",
+                "repoDatasetSize": 650,
+                "cwe": [
+                  "CWE-352"
+                ]
+              }
+            },
+            {
+              "id": "javascript/NoHardcodedCredentials",
+              "name": "NoHardcodedCredentials",
+              "shortDescription": {
+                "text": "Use of Hard-coded Credentials"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "help": {
+                "markdown": "\n## Details\n\nDevelopers may use hard-coded credentials for convenience when coding in order to simplify their workflow. While they are responsible for removing these before production, occasionally this task may fall through the cracks. This also becomes a maintenance challenge when credentials are re-used across multiple applications.\n\nOnce hackers gain access, they may take advantage of privilege level to remove or alter data, take down a site or app, or hold any of the above for ransom. The risk across multiple similar projects is even greater. If code containing the credentials is reused across multiple projects, they will all be compromised.\n\n### Best practices for prevention\n* Plan software architecture such that keys and passwords are always stored outside the code, wherever possible.\n* Plan encryption into software architecture for all credential information and ensure proper handling of keys, credentials, and passwords.\n* Prompt for a secure password on first login rather than hard-code a default password.\n* If a hard-coded password or credential must be used, limit its use, for example, to system console users rather than via the network.\n* Use strong hashes for inbound password authentication, ideally with randomly assigned salts to increase the difficulty level in case of brute-force attack.",
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "javascript",
+                  "maintenance",
+                  "tests",
+                  "user",
+                  "login"
+                ],
+                "categories": [
+                  "Security"
+                ],
+                "exampleCommitFixes": [
+                  {
+                    "commitURL": "https://github.com/dfoderick/fullcyclereact/commit/a6abd97bd776ce56da8ac321ad0e1b500f67721d?diff=split#diff-ca64812ac15b141271f726a5a95a3402L9",
+                    "lines": [
+                      {
+                        "line": "const SSE = require('sse');",
+                        "lineNumber": 6,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "const bodyParser = require('body-parser');",
+                        "lineNumber": 7,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "const redis = require('redis');",
+                        "lineNumber": 8,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "const amqp = require('amqplib/callback_api');",
+                        "lineNumber": 9,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "const redis_port = 6379",
+                        "lineNumber": 19,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "const redis_host = serverhost",
+                        "lineNumber": 20,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "const redis_password = ''",
+                        "lineNumber": 21,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "//Message envelope for putting messages on the bus",
+                        "lineNumber": 23,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "function redisclient(){",
+                        "lineNumber": 98,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  var client = redis.createClient(redis_port, redis_host, {no_ready_check: true});",
+                        "lineNumber": 99,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "  client.auth(redis_password, function (err) {",
+                        "lineNumber": 100,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "  var client = redis.createClient(services.redis.port, services.redis.host, {no_ready_check: true});",
+                        "lineNumber": 54,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "  client.auth(services.redis.password, function (err) {",
+                        "lineNumber": 55,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "     if (err) throw err;",
+                        "lineNumber": 101,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  });",
+                        "lineNumber": 102,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/foxhound87/mobx-react-form/commit/3120097eb35365742aaa55914461f3702c4c0b9e?diff=split#diff-4cd745890a2a3a4ed716894e77383749L38",
+                    "lines": [
+                      {
+                        "line": " ",
+                        "lineNumber": 35,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "  onInit(form) {",
+                        "lineNumber": 36,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "    // form.update({ user: { email: 'notAnEmail' } }); // TO FIX",
+                        "lineNumber": 36,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "    form.$('user').update({ email: 'notAnEmail' });",
+                        "lineNumber": 37,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "    form.update({ user: { email: 'notAnEmail' } });",
+                        "lineNumber": 37,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "  }",
+                        "lineNumber": 38,
+                        "lineChange": "none"
+                      },
+                      {
+                        "line": "}",
+                        "lineNumber": 39,
+                        "lineChange": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "commitURL": "https://github.com/DAVFoundation/community/commit/22bfd8d1c7bdad79421868ace378731ccc76c6f3?diff=split#diff-ffbabba1d71222fff38a087e3cb7d372L13",
+                    "lines": [
+                      {
+                        "line": "// restrict.canPostDavUpdates();",
+                        "lineNumber": 10,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "restrict.canPostDavUpdates();",
+                        "lineNumber": 10,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "let person = await Person.findOne({email:\"a@3.com\"}).exec();",
+                        "lineNumber": 12,
+                        "lineChange": "removed"
+                      },
+                      {
+                        "line": "let person = await Person.findOne({email:config.dav.email}).exec();",
+                        "lineNumber": 12,
+                        "lineChange": "added"
+                      },
+                      {
+                        "line": "let account = await DavAccount.findById(person.account.id).exec();",
+                        "lineNumber": 14,
+                        "lineChange": "none"
+                      }
+                    ]
+                  }
+                ],
+                "exampleCommitDescriptions": [
+                  "get users test",
+                  "updated login unit test"
+                ],
+                "precision": "very-high",
+                "repoDatasetSize": 256,
+                "cwe": [
+                  "CWE-798"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "javascript/PT",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "Unsanitized input from an HTTP parameter flows into fs.readFile, where it is used as a path. This may result in a Path Traversal vulnerability and allow an attacker to read arbitrary files.",
+            "markdown": "Unsanitized input from {0} {1} into {2}, where it is used as a path. This may result in a Path Traversal vulnerability and allow an attacker to read arbitrary files.",
+            "arguments": [
+              "[an HTTP parameter](0)",
+              "[flows](1),(2),(3)",
+              "[fs.readFile](4)"
+            ]
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "routes/index.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "endLine": 25,
+                  "startColumn": 17,
+                  "endColumn": 47
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "0": "e9c0de3757323577703979b90b2244e022a41474c8bae674fb1bc8a58d994b13",
+            "1": "c3f8dfad.4773f344.607187b5.d7919eeb.ef9f7d82.8020cfdf.df7e59ba.0d398d22.c3f8dfad.4773f344.607187b5.c559ebce.3a08f0d2.8020cfdf.83265159.0d398d22"
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "id": 0,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 22,
+                            "endLine": 22,
+                            "startColumn": 21,
+                            "endColumn": 29
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 1,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 22,
+                            "endLine": 22,
+                            "startColumn": 21,
+                            "endColumn": 29
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 2,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 22,
+                            "endLine": 22,
+                            "startColumn": 7,
+                            "endColumn": 17
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 3,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 25,
+                            "endLine": 25,
+                            "startColumn": 29,
+                            "endColumn": 39
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 4,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 25,
+                            "endLine": 25,
+                            "startColumn": 17,
+                            "endColumn": 47
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "priorityScore": 810,
+            "priorityScoreFactors": [
+              {
+                "label": true,
+                "type": "hotFileSource"
+              },
+              {
+                "label": true,
+                "type": "fixExamples"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "javascript/NoHardcodedPasswords",
+          "ruleIndex": 1,
+          "level": "warning",
+          "message": {
+            "text": "Do not hardcode passwords in code. Found hardcoded password used in mysql.createConnection.",
+            "markdown": "Do not hardcode passwords in code. Found hardcoded password used in {0}.",
+            "arguments": [
+              "[mysql.createConnection](0)"
+            ]
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "routes/index.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "endLine": 11,
+                  "startColumn": 3,
+                  "endColumn": 10
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "0": "6e71cfe754331bf0ff0f56c37399b33adcacac5eedf6929e63a557be9e580286",
+            "1": "12567ef6.4773f344.bd65d204.e052b9a9.79a7d027.fcf3002d.ce4a9d89.12ac8ec9.839b1d0f.4773f344.bd65d204.93494013.79a7d027.5fce695c.df7e59ba.89d75565"
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "id": 0,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 8,
+                            "endLine": 8,
+                            "startColumn": 13,
+                            "endColumn": 34
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "priorityScore": 560,
+            "priorityScoreFactors": [
+              {
+                "label": true,
+                "type": "hotFileSource"
+              },
+              {
+                "label": true,
+                "type": "fixExamples"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "javascript/Sqli",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "Unsanitized input from an HTTP parameter flows into get, where it is used in an SQL query. This may result in an SQL Injection vulnerability.",
+            "markdown": "Unsanitized input from {0} {1} into {2}, where it is used in an SQL query. This may result in an SQL Injection vulnerability.",
+            "arguments": [
+              "[an HTTP parameter](0)",
+              "[flows](1),(2),(3)",
+              "[get](4)"
+            ]
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "routes/index.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "endLine": 39,
+                  "startColumn": 20,
+                  "endColumn": 25
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "0": "90e45b3929624a1afa5d50d5e2a4b6d662d6c79e155f7b0bf66b7dd7fac306e5",
+            "1": "a4fec5d2.4773f344.607187b5.d7919eeb.79a7d027.8020cfdf.df7e59ba.deea270c.29386b0b.4773f344.607187b5.c559ebce.79a7d027.8020cfdf.83265159.60d0a2aa"
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "id": 0,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 35,
+                            "endLine": 35,
+                            "startColumn": 14,
+                            "endColumn": 22
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 1,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 35,
+                            "endLine": 35,
+                            "startColumn": 14,
+                            "endColumn": 22
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 2,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 35,
+                            "endLine": 35,
+                            "startColumn": 7,
+                            "endColumn": 10
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 3,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 39,
+                            "endLine": 39,
+                            "startColumn": 27,
+                            "endColumn": 30
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 4,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 39,
+                            "endLine": 39,
+                            "startColumn": 20,
+                            "endColumn": 25
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "priorityScore": 810,
+            "priorityScoreFactors": [
+              {
+                "label": true,
+                "type": "hotFileSource"
+              },
+              {
+                "label": true,
+                "type": "fixExamples"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "javascript/NoRateLimitingForExpensiveWebOperation",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "This endpoint handler performs a file system operation and does not use a rate-limiting mechanism. It may enable the attackers to perform Denial-of-service attacks. Consider using a rate-limiting middleware such as express-limit.",
+            "markdown": "This {0} performs {1} and does not use a rate-limiting mechanism. It may enable the attackers to perform Denial-of-service attacks. Consider using a rate-limiting middleware such as express-limit.",
+            "arguments": [
+              "[endpoint handler](0)",
+              "[a file system operation](1)"
+            ]
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "routes/index.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "endLine": 17,
+                  "startColumn": 17,
+                  "endColumn": 1
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "0": "5e8caf78e81e20089356be0143436561de74e7f74a581f88dd242aa7393b405c",
+            "1": "92e26ef2.4773f344.607187b5.c559ebce.fd1fa73f.5fce695c.83265159.89d75565.92e26ef2.4773f344.607187b5.c559ebce.fd1fa73f.5fce695c.83265159.89d75565"
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "id": 0,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 15,
+                            "endLine": 17,
+                            "startColumn": 17,
+                            "endColumn": 1
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 1,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 16,
+                            "endLine": 16,
+                            "startColumn": 14,
+                            "endColumn": 20
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "priorityScore": 690,
+            "priorityScoreFactors": [
+              {
+                "label": true,
+                "type": "multipleOccurrence"
+              },
+              {
+                "label": true,
+                "type": "hotFileSource"
+              },
+              {
+                "label": true,
+                "type": "fixExamples"
+              },
+              {
+                "label": true,
+                "type": "commonlyFixed"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "javascript/NoRateLimitingForExpensiveWebOperation",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "This endpoint handler performs a file system operation and does not use a rate-limiting mechanism. It may enable the attackers to perform Denial-of-service attacks. Consider using a rate-limiting middleware such as express-limit.",
+            "markdown": "This {0} performs {1} and does not use a rate-limiting mechanism. It may enable the attackers to perform Denial-of-service attacks. Consider using a rate-limiting middleware such as express-limit.",
+            "arguments": [
+              "[endpoint handler](0)",
+              "[a file system operation](1)"
+            ]
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "routes/index.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 21,
+                  "endLine": 29,
+                  "startColumn": 24,
+                  "endColumn": 1
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "0": "bf4d9074ac00fc5a3d977a2a816ad77043d5593c2e07b503d456493edcb7bd52",
+            "1": "92e26ef2.4773f344.607187b5.c559ebce.fd1fa73f.5fce695c.83265159.89d75565.c3f8dfad.4773f344.607187b5.c559ebce.3a08f0d2.5fce695c.83265159.89d75565"
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "id": 0,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 21,
+                            "endLine": 29,
+                            "startColumn": 24,
+                            "endColumn": 1
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 1,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 25,
+                            "endLine": 25,
+                            "startColumn": 29,
+                            "endColumn": 39
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "priorityScore": 690,
+            "priorityScoreFactors": [
+              {
+                "label": true,
+                "type": "multipleOccurrence"
+              },
+              {
+                "label": true,
+                "type": "hotFileSource"
+              },
+              {
+                "label": true,
+                "type": "fixExamples"
+              },
+              {
+                "label": true,
+                "type": "commonlyFixed"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "javascript/NoRateLimitingForExpensiveWebOperation",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "This endpoint handler performs a file system operation and does not use a rate-limiting mechanism. It may enable the attackers to perform Denial-of-service attacks. Consider using a rate-limiting middleware such as express-limit.",
+            "markdown": "This {0} performs {1} and does not use a rate-limiting mechanism. It may enable the attackers to perform Denial-of-service attacks. Consider using a rate-limiting middleware such as express-limit.",
+            "arguments": [
+              "[endpoint handler](0)",
+              "[a file system operation](1)"
+            ]
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "app.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 46,
+                  "endLine": 56,
+                  "startColumn": 9,
+                  "endColumn": 1
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "0": "b4177453c9a4410119f05c249b74f54f69086bd208036ef50843e107860f3d38",
+            "1": "ae77ea27.4773f344.44eded10.c559ebce.fd1fa73f.5fce695c.83265159.d5de5421.ae77ea27.4773f344.44eded10.c559ebce.f0785b5a.5fce695c.7b86ed34.d5de5421"
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "id": 0,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "app.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 46,
+                            "endLine": 56,
+                            "startColumn": 9,
+                            "endColumn": 1
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 1,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "app.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 53,
+                            "endLine": 53,
+                            "startColumn": 14,
+                            "endColumn": 20
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "priorityScore": 690,
+            "priorityScoreFactors": [
+              {
+                "label": true,
+                "type": "multipleOccurrence"
+              },
+              {
+                "label": true,
+                "type": "hotFileSource"
+              },
+              {
+                "label": true,
+                "type": "fixExamples"
+              },
+              {
+                "label": true,
+                "type": "commonlyFixed"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "javascript/NoRateLimitingForExpensiveWebOperation",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "This endpoint handler performs a file system operation and does not use a rate-limiting mechanism. It may enable the attackers to perform Denial-of-service attacks. Consider using a rate-limiting middleware such as express-limit.",
+            "markdown": "This {0} performs {1} and does not use a rate-limiting mechanism. It may enable the attackers to perform Denial-of-service attacks. Consider using a rate-limiting middleware such as express-limit.",
+            "arguments": [
+              "[endpoint handler](0)",
+              "[a file system operation](1)"
+            ]
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "routes/createDummyData.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "endLine": 37,
+                  "startColumn": 17,
+                  "endColumn": 1
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "0": "932ba3795ea2bf3308628c0f0bf3520ae00df4e3ea6d653326677aa7347c5972",
+            "1": "92e26ef2.4773f344.607187b5.c559ebce.fd1fa73f.5fce695c.83265159.89d75565.92e26ef2.4773f344.607187b5.c559ebce.fd1fa73f.5fce695c.83265159.89d75565"
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "id": 0,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/createDummyData.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 16,
+                            "endLine": 37,
+                            "startColumn": 17,
+                            "endColumn": 1
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "id": 1,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/createDummyData.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 35,
+                            "endLine": 35,
+                            "startColumn": 14,
+                            "endColumn": 30
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "priorityScore": 640,
+            "priorityScoreFactors": [
+              {
+                "label": true,
+                "type": "multipleOccurrence"
+              },
+              {
+                "label": true,
+                "type": "hotFileCodeFlow"
+              },
+              {
+                "label": true,
+                "type": "fixExamples"
+              },
+              {
+                "label": true,
+                "type": "commonlyFixed"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "javascript/UseCsurfForExpress",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "Consider using csurf middleware for your Express app to protect against CSRF attacks.",
+            "markdown": "Consider using csurf middleware for your {0} to protect against CSRF attacks.",
+            "arguments": [
+              "[Express app](0)"
+            ]
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "app.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "endLine": 16,
+                  "startColumn": 11,
+                  "endColumn": 19
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "0": "56a79664205b3f1df991ee14baf1f993409ab232737a2f51d3de9915c41ef85c",
+            "1": "ae77ea27.4773f344.607187b5.d7919eeb.a1fb1152.5fce695c.fee35010.89d75565.ae77ea27.4773f344.44eded10.c559ebce.f30fb760.5fce695c.7b86ed34.89d75565"
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "id": 0,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "app.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 16,
+                            "endLine": 16,
+                            "startColumn": 11,
+                            "endColumn": 19
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "priorityScore": 560,
+            "priorityScoreFactors": [
+              {
+                "label": true,
+                "type": "hotFileSource"
+              },
+              {
+                "label": true,
+                "type": "fixExamples"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "javascript/NoHardcodedCredentials",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "Do not hardcode credentials in code. Found hardcoded credential used in mysql.createConnection.",
+            "markdown": "Do not hardcode credentials in code. Found hardcoded credential used in {0}.",
+            "arguments": [
+              "[mysql.createConnection](0)"
+            ]
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "routes/index.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "endLine": 10,
+                  "startColumn": 3,
+                  "endColumn": 6
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "0": "4a970f629aa44e706382060079cd684fefee8f27f9dd5c24b6fe397d80a80080",
+            "1": "839b1d0f.4773f344.607187b5.e052b9a9.79a7d027.fcf3002d.399983c1.4bec1918.839b1d0f.4773f344.bd65d204.93494013.79a7d027.5fce695c.df7e59ba.89d75565"
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "id": 0,
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "routes/index.js",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 8,
+                            "endLine": 8,
+                            "startColumn": 13,
+                            "endColumn": 34
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "priorityScore": 560,
+            "priorityScoreFactors": [
+              {
+                "label": true,
+                "type": "hotFileSource"
+              },
+              {
+                "label": true,
+                "type": "fixExamples"
+              }
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "coverage": [
+          {
+            "files": 4,
+            "isSupported": true,
+            "lang": "JavaScript"
+          },
+          {
+            "files": 4,
+            "isSupported": true,
+            "lang": "EJS"
+          }
+        ]
+      }
+    }
+  ]
+}
